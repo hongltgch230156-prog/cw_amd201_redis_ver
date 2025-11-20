@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase Token Test</title>
+    <script type="module">
+        // 1️⃣ Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+        // 2️⃣ Firebase config (dán từ Web App Firebase của bạn)
+        const firebaseConfig = {
+            apiKey: "AIzaSyARxndQyv5TIZ8xxxxes9cqBOOqoqFn4Hw",
+            authDomain: "projectamd-c2a48.firebaseapp.com",
+            projectId: "projectamd-c2a48",
+            storageBucket: "projectamd-c2a48.firebasestorage.app",
+            messagingSenderId: "221158769757",
+            appId: "1:221158769757:web:db3149d7ecc53a3e5579b4",
+            measurementId: "G-CNQMP401LR"
+        };
+
+        // 3️⃣ Khởi tạo Firebase App & Auth
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // 4️⃣ Điền email/password test (có trong Authentication → Users)
+        const email = "testuser@example.com";    // Thay bằng email của bạn
+        const password = "123456";          // Thay bằng password của bạn
+
+        // 5️⃣ Login và lấy ID token
+        signInWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const idToken = await userCredential.user.getIdToken();
+                console.log("Firebase ID token:", idToken);
+                alert("Login thành công! Token đã log trong console.");
+            })
+            .catch((error) => {
+                console.error("Login lỗi:", error);
+                alert("Login lỗi, xem console để biết chi tiết.");
+            });
+    </script>
+</head>
+<body>
+    <h1>Firebase Token Test</h1>
+    <p>Mở console trình duyệt (F12 → Console) để xem token.</p>
+</body>
+</html>

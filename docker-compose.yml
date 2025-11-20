@@ -1,0 +1,85 @@
+﻿services:
+  service_url_shorten:
+    build:
+      context: .
+      dockerfile: Service_URL_Shorten/Dockerfile
+    ports:
+      - "8083:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+
+      - ConnectionStrings__DefaultConnection=Server=db;Database=Service_URL_ShortenDb;User Id=sa;Password=YourPassword123;TrustServerCertificate=True
+    depends_on:
+      - db
+
+  service_crud:
+    build:
+        context: ./Service_CRUD   
+        dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    
+      - ConnectionStrings__DefaultConnection=Server=db;Database=Service_URL_ShortenDb;User Id=sa;Password=YourPassword123;TrustServerCertificate=True
+    depends_on:
+      - db
+
+  service_api_gateway:
+    build:
+        context: ./Service_API_Gateway   
+        dockerfile: Dockerfile
+    ports:
+      - "8084:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Server=db;Database=Service_URL_ShortenDb;User Id=sa;Password=YourPassword123;TrustServerCertificate=True
+    depends_on:
+      - db
+  service_identity:
+    build:
+        context: ./Service_Identity  
+        dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Server=db;Database=Service_IdentityDb;User Id=sa;Password=YourPassword123;TrustServerCertificate=True
+    depends_on:
+      - db
+
+  service_url_shortener_frontend:
+
+    build:
+        context: ./url-shortener-frontend
+        dockerfile: Dockerfile
+    container_name: service_url_shortener_frontend
+    ports:
+        - "8085:80" 
+    
+    environment:
+        - VITE_IDENTITY_URL=http://localhost:8081/api/Auth
+        - VITE_URL_SHORTEN_URL=http://localhost:8083/api/Url
+        - VITE_CRUD_URL=http://localhost:8082/api/url
+
+      
+    restart: always
+
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourPassword123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "14331:1433"
+    volumes:
+      - mssqldata:/var/opt/mssql
+
+volumes:
+  mssqldata:
+    external: true
