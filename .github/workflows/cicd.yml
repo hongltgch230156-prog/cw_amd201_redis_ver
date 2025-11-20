@@ -23,9 +23,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore Dependencies
-        run: dotnet restore CW_AMD201_redis_ver.sln
+        run: dotnet restore cw_amd201_redis_ver.sln
       - name: Build Solution
-        run: dotnet build CW_AMD201_redis_ver.sln --no-restore
+        run: dotnet build cw_amd201_redis_ver.sln --no-restore
       - name: Run Unit Tests (CRUD)
         run: dotnet test Test_Crud/Test_Crud.csproj --no-build --verbosity normal
 
@@ -41,9 +41,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore Dependencies
-        run: dotnet restore CW_AMD201_redis_ver.sln
+        run: dotnet restore cw_amd201_redis_ver.sln
       - name: Build Solution
-        run: dotnet build CW_AMD201_redis_ver.sln --no-restore
+        run: dotnet build cw_amd201_redis_ver.sln --no-restore
       - name: Run Unit Tests (URL Shorten)
         run: dotnet test Test_Shorten_Url/Test_Shorten_Url.csproj --no-build --verbosity normal
 
@@ -59,9 +59,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore Dependencies
-        run: dotnet restore CW_AMD201_redis_ver.sln
+        run: dotnet restore cw_amd201_redis_ver.sln
       - name: Build Gateway
-        run: dotnet build CW_AMD201_redis_ver.sln --no-restore
+        run: dotnet build cw_amd201_redis_ver.sln --no-restore
 
   # --- 4. CI: IDENTITY SERVICE ---
   build-identity:
@@ -75,9 +75,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore Dependencies
-        run: dotnet restore CW_AMD201_redis_ver.sln
+        run: dotnet restore cw_amd201_redis_ver.sln
       - name: Build Identity
-        run: dotnet build CW_AMD201_redis_ver.sln --no-restore
+        run: dotnet build cw_amd201_redis_ver.sln --no-restore
 
   # --- 5. CD PHASE: PUSH DOCKER IMAGES ---
   cd-push-docker:
