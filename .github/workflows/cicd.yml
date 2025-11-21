@@ -113,7 +113,8 @@ jobs:
       - name: Build & Push URL Shorten
         uses: docker/build-push-action@v5
         with:
-          context: ./Service_URL_Shorten 
+          context: .
+          file: ./Service_URL_Shorten/Dockerfile
           push: true
           tags: |
             ${{ env.DOCKER_REPOSITORY }}:urlshorten-${{ github.sha }}
