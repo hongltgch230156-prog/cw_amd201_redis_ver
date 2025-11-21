@@ -29,9 +29,11 @@ namespace Service_URL_Shorten.Controllers
         [HttpGet("{code}")]
         public async Task<IActionResult> RedirectToOriginal(string code)
         {
+            // Lấy URL gốc -> đọc 
             var query = new GetOriginalUrlQuery { ShortCode = code };
             var result = await _mediator.Send(query);
             if (result == null) return NotFound("Short URL not found");
+
             //return Ok(new { result.OriginalUrl });
             return Redirect(result.OriginalUrl);
 
@@ -64,6 +66,25 @@ namespace Service_URL_Shorten.Controllers
             return File(qrCodeBytes, "image/png");
         }
 
+        [HttpGet("info/{code}")]
+        public async Task<IActionResult> GetUrlInfo([FromRoute] string code, [FromQuery] bool increment = false)
+        {
 
+            if (increment)
+            {
+                await _mediator.Send(new IncreaseClickCountCommand
+                {
+                    ShortCode = code
+                });
+            }
+            var query = new GetOriginalUrlQuery { ShortCode = code };
+            var result = await _mediator.Send(query);
+
+            if (result == null)
+                return NotFound(new { message = "Short URL not found", Source = "N/A" });
+
+            //Trả về json UrlResult để fe đọc được Source và Duration
+            return Ok(result);
+        }
     }
 }

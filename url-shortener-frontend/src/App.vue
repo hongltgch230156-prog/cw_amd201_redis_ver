@@ -1,12 +1,14 @@
 <script setup>
+import axios from 'axios'
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from './stores/auth';
-import { onAuthStateChanged, signOut, getAuth } from 'firebase/auth'; // Imports Firebase
+import { onAuthStateChanged, signOut, getAuth } from 'firebase/auth'; 
 import ShortenForm from './components/ShortenForm.vue';
 import UrlLookupForm from './components/UrlLookupForm.vue';
 import UrlList from './components/UrlList.vue';
 import LoginModal from './components/LoginModal.vue';       
 import RegisterModal from './components/RegisterModal.vue'; 
+import RedisDashboard from './components/RedisDashboard.vue'; 
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
@@ -24,6 +26,15 @@ const userEmail = ref(null);
 const showLoginModal = ref(false);
 const showRegisterModal = ref(false);
 
+// REDIS DASHBOARD STATES
+const showRedisDashboard = ref(false);
+const requestLogs = ref([]); 
+
+// Hàm ghi log Performance 
+const addRequestLog = (logItem) => {
+  requestLogs.value.push(logItem);
+};
+
 // Trạng thái URL
 const activeTab = ref('shorten'); 
 const urlList = ref([]); 
@@ -32,6 +43,7 @@ const urlList = ref([]);
 const addToList = (newUrl) => {
   urlList.value.unshift({ 
     ...newUrl, 
+    clickCount: newUrl.clickCount || 0,
     createdAt: new Date().toLocaleString('vi-VN') 
   });
 };
@@ -53,10 +65,10 @@ const handleLogout = async () => {
 // Cập nhật trạng thái người dùng khi có thay đổi (Login/Logout)
 const updateAuthState = (user) => {
     if (user) {
-        // 1. Lấy phần đầu của email (hoặc dùng 'User' nếu email không có)
+        // Lấy phần đầu của email (hoặc dùng 'User' nếu email không có)
         const emailPart = user.email ? user.email.split('@')[0] : 'User';
         
-        // 2. Ưu tiên DisplayName, nếu không có thì dùng phần đầu email
+        // Ưu tiên DisplayName, nếu không có thì dùng phần đầu email
         const name = user.displayName || emailPart;
 
         isLoggedIn.value = true;
@@ -103,7 +115,7 @@ onMounted(() => {
       </div>
 
       <nav class="navbar-right">
-        <button class="nav-btn">About</button>
+        <button class="nav-btn" @click="showRedisDashboard = true">📊 Redis</button>
         <button class="nav-btn" @click="showLoginModal = true">Login</button>
         <button class="nav-btn" @click="showRegisterModal = true">Register</button>
         <button class="nav-btn" @click="handleLogout">Logout</button>
@@ -153,6 +165,7 @@ onMounted(() => {
         <ShortenForm 
           v-if="activeTab === 'shorten'"
           @url-shortened="addToList"
+          @request-logged="addRequestLog"
           :isLoggedIn="isLoggedIn"
         />
 
@@ -160,7 +173,9 @@ onMounted(() => {
         <UrlLookupForm 
           v-if="activeTab === 'lookup'"
           @url-found="addToList"
+          @request-logged="addRequestLog"
         />
+
       </div>
       
       <h2 class="history-title">Your Link History</h2>
@@ -190,6 +205,12 @@ onMounted(() => {
         v-if="showRegisterModal" 
         @close="showRegisterModal = false" 
         @success="showRegisterModal = false; showLoginModal = true"
+    />
+
+    <RedisDashboard 
+        :isOpen="showRedisDashboard"
+        :logs="requestLogs"
+        @close="showRedisDashboard = false"
     />
   </div>
 </template>

@@ -24,4 +24,9 @@ RUN dotnet publish "./Service_Identity.csproj" -c Release -o /app/publish /p:Use
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+RUN mkdir -p Config
+COPY Config/firebase.json Config/
+
 ENTRYPOINT ["dotnet", "Service_Identity.dll"]
+ 

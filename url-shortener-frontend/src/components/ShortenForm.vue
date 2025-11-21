@@ -7,7 +7,7 @@ import { shortenUrl } from '../services/api.js';
 const auth = useAuthStore();
 const isLoggedIn = computed(() => auth.isLoggedIn);
 
-const emit = defineEmits(['url-shortened']);
+const emit = defineEmits(['url-shortened', 'request-logged']);
 
 const originalUrl = ref('');
 const customShortcode = ref('');
@@ -40,6 +40,8 @@ const callShortenUrlApi = async () => {
     return;
   }
 
+  const startTime = performance.now(); // Bắt đầu bấm giờ
+
   try {
     isLoading.value = true;
 
@@ -65,11 +67,20 @@ const callShortenUrlApi = async () => {
       inputOriginalUrl = originalUrl.value;
 
     } else {
-      // 2️⃣ Không nhập shortcode → dùng API tự động (port 3333)
+      // k nhập shortcode → dùng API tự động (port 3333)
       const result = await shortenUrl(originalUrl.value);
       shortUrl = result.url;           // backend trả về URL đầy đủ
       inputOriginalUrl = result.originalUrl;
     }
+    const endTime = performance.now(); // Kết thúc bấm giờ
+    const duration = Math.round(endTime - startTime);
+
+    // gửi log về Dashboard
+    emit('request-logged', {
+        time: new Date().toLocaleTimeString(),
+        duration: duration,
+        source: 'Creation', // Đánh dấu là quá trình Tạo (không liên quan cache)
+    });
 
     emit('url-shortened', {
       id: shortUrl.split('/').pop(),

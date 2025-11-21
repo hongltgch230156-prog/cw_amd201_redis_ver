@@ -1,8 +1,9 @@
     // main.js
     import { createApp } from 'vue'
     import { createPinia } from 'pinia';
+    import piniaPersist from 'pinia-plugin-persistedstate'
     import App from './App.vue'
-    import axios from 'axios' // Cài đặt: npm install axios
+    import axios from 'axios' 
 
     import Toast from "vue-toastification";
     import "vue-toastification/dist/index.css";
@@ -10,6 +11,7 @@
     // Imports Firebase Client SDK
     import { initializeApp } from 'firebase/app';
     import { getAuth } from 'firebase/auth';
+    import { getFirestore } from "firebase/firestore";
 
     const firebaseConfig = {
         apiKey: "AIzaSyARxndQyv5TIZ8xxxxes9cqBOOqoqFn4Hw",
@@ -23,6 +25,7 @@
     // Khởi tạo Firebase App và Auth
     const firebaseApp = initializeApp(firebaseConfig);
     const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
 
     // Tạo Axios instance riêng cho Identity Service
     const identityApi = axios.create({
@@ -35,9 +38,11 @@
     const app = createApp(App);
 
     app.provide('auth', auth);
+    app.provide("db", db);
     app.provide('identityApi', identityApi);
 
     const pinia = createPinia();
+    pinia.use(piniaPersist)
     app.use(pinia);
 
     app.use(Toast, {

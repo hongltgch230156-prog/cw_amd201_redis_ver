@@ -8,12 +8,13 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # COPY .csproj từ thư mục con nếu cần
-COPY ["Service_URL_Shorten.csproj", "."]
-RUN dotnet restore "./Service_URL_Shorten.csproj"
+COPY ["Service_URL_Shorten/Service_URL_Shorten.csproj", "Service_URL_Shorten/"]
+RUN dotnet restore "Service_URL_Shorten/Service_URL_Shorten.csproj"
 
 # COPY toàn bộ project
 COPY . .
 
+WORKDIR "/src/Service_URL_Shorten"
 RUN dotnet build "./Service_URL_Shorten.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
@@ -23,4 +24,4 @@ RUN dotnet publish "./Service_URL_Shorten.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Service_URL_Shorten.dll"]
+ENTRYPOINT ["/bin/bash", "-c", "sleep 10 && dotnet Service_URL_Shorten.dll"]

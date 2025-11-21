@@ -1,9 +1,13 @@
-﻿using MediatR;
+﻿using Google.Cloud.Firestore;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Service_URL_Shorten.Commands;
 using Service_URL_Shorten.Data;
 using Service_URL_Shorten.Queries;
+using StackExchange.Redis;
+
 namespace Service_URL_Shorten
 {
     public class Program
@@ -37,6 +41,16 @@ namespace Service_URL_Shorten
                           .AllowAnyMethod()
                           .AllowCredentials();
                 });
+            });
+
+            var redisConnection = builder.Configuration.GetConnectionString("Redis");
+
+            // 2. Cấu hình Redis Cache
+            builder.Services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnection;
+
+                options.InstanceName = "UrlShortener_";
             });
 
 

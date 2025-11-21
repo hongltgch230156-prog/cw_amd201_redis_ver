@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import { defineProps, ref } from 'vue';
 import { getQrCodeUrl, deleteUrlById } from '../services/api.js';
 import { useAuthStore } from '../stores/auth';
@@ -6,6 +7,7 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 const authStore = useAuthStore();
+const API_URL = import.meta.env.VITE_URL_SHORTEN_URL; 
 
 const props = defineProps({
   urls: {
@@ -17,6 +19,31 @@ const props = defineProps({
     default: false
   }
 });
+
+// tăng số click khi người dùng bấm vào link
+const handleLinkClick = async (urlItem) => {
+  // Mở link ngay lập tức
+  window.open(urlItem.shortUrl, '_blank');
+
+  // Chờ Backend xử lý (0.5s)
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // Gọi API lấy số liệu mới
+  try {
+    const shortCode = urlItem.shortUrl.split('/').pop();
+    const response = await axios.get(`${API_URL}/info/${shortCode}?increment=true`);
+
+
+    console.log("3. Kết quả từ Server:", response.data);
+    
+    if (response.data) {
+      // Cập nhật giao diện
+      urlItem.clickCount = response.data.clickCount;
+    }
+  } catch (error) {
+    console.error("Update error:", error);
+  }
+};
 
 // State để quản lý Modal QR code
 const qrCodeImageUrl = ref(null);
@@ -119,17 +146,24 @@ const deletePermanent = async (urlItem, index) => {
     >
       <p class="url-original"><strong>Original URL:</strong> {{ url.originalUrl }}</p>
       
-      <!-- Hiển thị link ngắn -->
-      <a 
-        :href="url.shortUrl" 
-        target="_blank" 
-        class="url-short"
-      >
-        {{ url.shortUrl }}
-      </a>
-      
-      <!-- Thời gian rút gọn -->
-      <p class="url-date">{{ url.createdAt }}</p>
+      <!-- Thời gian -->
+      <div class="metadata-section">
+            
+            <!-- hiển thị ClickCount & CreatedAt -->
+              <a href="#" @click.prevent="handleLinkClick(url)" class="url-short">
+                {{ url.shortUrl }}
+              </a>
+            <div class="metadata">
+              <span class="click-count">
+                <!-- Icon và số đếm -->
+                <i class="fas fa-chart-bar"></i> {{ url.clickCount || 0 }} clicks
+              </span>
+              <span class="created-at">
+                <!-- Icon và ngày tạo -->
+                <i class="far fa-calendar-alt"></i> {{ url.createdAt }}
+              </span>
+            </div>
+      </div>
 
       <!-- Các nút hành động -->
       <div class="action-buttons">
@@ -153,7 +187,7 @@ const deletePermanent = async (urlItem, index) => {
           </div>
 
         <!-- Guest vẫn xóa tạm thời ngay -->
-        <button v-if="!props.isLoggedIn" class="btn-red" @click="deleteTemporary(url, index)">Delete</button>
+        <!--<button v-if="!props.isLoggedIn" class="btn-red" @click="deleteTemporary(url, index)">Delete</button>-->
       </div>
     </div>
     
@@ -248,6 +282,7 @@ const deletePermanent = async (urlItem, index) => {
   margin-top: 14px;
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 button {
@@ -358,6 +393,44 @@ button {
 }
 .btn-gray:hover {
   background: #9ca3af;
+}
+
+.card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Quan trọng: căn trên */
+    margin-top: 5px;
+    gap: 15px;
+}
+
+.main-link-section {
+    flex-grow: 1;
+    min-width: 50%;
+}
+
+.metadata-section {
+    display: block;
+    flex-direction: column;
+    align-items: flex-end; /* Căn nội dung về bên phải */
+    gap: 10px;
+}
+
+.metadata {
+    display: flex;
+    gap: 15px; /* Khoảng cách giữa các thông số */
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 5px;
+}
+
+.click-count, .created-at {
+    display: flex;
+    align-items: center;
+}
+
+.click-count i, .created-at i {
+    margin-right: 5px;
+    color: #42b983; /* Màu xanh lá nổi bật */
 }
 
 </style>

@@ -5,6 +5,8 @@ using Service_URL_Shorten.Models;
 using Service_URL_Shorten.Queries;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Distributed;
+using Moq;
 
 namespace Test_Shorten_Url.Handlers
 {
@@ -15,10 +17,24 @@ namespace Test_Shorten_Url.Handlers
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDb_Get")
                 .Options;
+
             var context = new ApplicationDbContext(options);
+
             context.Urls.Add(new Url { OriginalUrl = "https://example.com", ShortCode = "abc123" });
             context.SaveChanges();
+
             return context;
+        }
+
+        private IDistributedCache GetFakeCache()
+        {
+            var cache = new Mock<IDistributedCache>();
+
+            // Khi gọi GetAsync -> trả về null (để buộc handler đọc DB)
+            cache.Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                 .ReturnsAsync((byte[])null);
+
+            return cache.Object;
         }
 
         [Fact]
@@ -26,7 +42,10 @@ namespace Test_Shorten_Url.Handlers
         {
             // Arrange
             var context = GetDbContext();
-            var handler = new GetOriginalUrlQueryHandler(context);
+            var cache = GetFakeCache();
+
+            var handler = new GetOriginalUrlQueryHandler(context, cache);
+
             var query = new GetOriginalUrlQuery { ShortCode = "abc123" };
 
             // Act
@@ -42,7 +61,9 @@ namespace Test_Shorten_Url.Handlers
         {
             // Arrange
             var context = GetDbContext();
-            var handler = new GetOriginalUrlQueryHandler(context);
+            var cache = GetFakeCache();
+
+            var handler = new GetOriginalUrlQueryHandler(context, cache);
             var query = new GetOriginalUrlQuery { ShortCode = "notfound" };
 
             // Act

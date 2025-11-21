@@ -1,4 +1,16 @@
 ﻿services:
+  redis:
+    image: redis:alpine
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   service_url_shorten:
     build:
       context: .
@@ -8,10 +20,12 @@
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-
       - ConnectionStrings__DefaultConnection=Server=db;Database=Service_URL_ShortenDb;User Id=sa;Password=YourPassword123;TrustServerCertificate=True
+      - ConnectionStrings__Redis=redis:6379
+
     depends_on:
       - db
+      - redis
 
   service_crud:
     build:

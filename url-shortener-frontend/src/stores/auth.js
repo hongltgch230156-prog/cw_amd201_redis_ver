@@ -18,5 +18,15 @@ export const useAuthStore = defineStore('auth', {
       this.user = null;
       this.idToken = null;
     }
+  },
+  //bật lưu vào localStorage
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'auth',
+        storage: localStorage,
+      }
+    ]
   }
 });

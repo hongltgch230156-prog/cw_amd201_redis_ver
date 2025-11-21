@@ -1,12 +1,15 @@
 ﻿using MediatR;
-using Service_URL_Shorten.Models;
-using Service_URL_Shorten.Data;
 using Microsoft.EntityFrameworkCore;
+using Service_URL_Shorten.Data;
+using Service_URL_Shorten.Models;
+using Google.Cloud.Firestore;
+
 namespace Service_URL_Shorten.Commands
 {
     public class CreateShortUrlCommandHandler : IRequestHandler<CreateShortUrlCommand, Url>
     {
         private readonly ApplicationDbContext _context;
+        private readonly FirestoreDb _firestoreDb;
         public CreateShortUrlCommandHandler(ApplicationDbContext context)
         {
             _context = context;
@@ -34,12 +37,11 @@ namespace Service_URL_Shorten.Commands
             var url = new Url
             {
                 OriginalUrl = request.OriginalUrl,
-                ShortCode = shortCode
+                ShortCode = shortCode,
+                ClickCount = 0
             };
-
             _context.Urls.Add(url);
             await _context.SaveChangesAsync(cancellationToken);
-
             return url;
         }
 

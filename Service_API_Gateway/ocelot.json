@@ -55,6 +55,28 @@
     },
 
     {
+      "UpstreamPathTemplate": "/gateway/url/info/{code}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/url/info/{code}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "service_url_shorten",
+          "Port": 8080
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 100,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      }
+    },
+
+    {
       "UpstreamPathTemplate": "/gateway/url/crud",
       "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
       "DownstreamPathTemplate": "/api/url",
