@@ -35,7 +35,6 @@ namespace LoginRegister
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<GetUserByFirebaseUidHandler>();
             builder.Services.AddScoped<CreateUserHandler>();
-            builder.Services.AddScoped<GetUserByFirebaseUidHandler>(); // Duplicates removed
 
             // Cấu hình database
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -52,8 +51,6 @@ namespace LoginRegister
             // Nếu đang chạy Development (Local) và chưa set biến môi trường thì đọc file thủ công
             if (builder.Environment.IsDevelopment() && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS")))
             {
-                // Fallback cho máy local nếu lười set biến môi trường
-                // Đảm bảo file này tồn tại ở máy bạn
                 credential = GoogleCredential.FromFile("Config/firebase.json");
             }
             else
@@ -73,10 +70,19 @@ namespace LoginRegister
                     Console.WriteLine("----> DEBUG: File NOT FOUND! Check Secret Files on Render. <----");
             }
 
-            FirebaseApp.Create(new AppOptions
+            try
             {
-                Credential = credential
-            });
+                FirebaseApp.Create(new AppOptions
+                {
+                    Credential = credential
+                });
+                Console.WriteLine("Firebase initialized successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Firebase initialization failed: " + ex);
+            }
+
 
             var app = builder.Build();
 
