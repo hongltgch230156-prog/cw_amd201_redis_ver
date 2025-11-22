@@ -10,6 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
     <PackageReference Include="Google.Cloud.Firestore" Version="3.13.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
