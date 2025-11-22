@@ -36,7 +36,7 @@ namespace Service_URL_Shorten
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.SetIsOriginAllowed(origin => true) // cho local dev
+                    policy.WithOrigins("http://localhost:5173", "https://url-shortener-frontend-p2sn.onrender.com", "http://localhost:8085") 
                           .AllowAnyHeader()
                           .AllowAnyMethod()
                           .AllowCredentials();
