@@ -43,12 +43,49 @@ namespace LoginRegister
 
 
             // Firebase Admin SDK
+            //FirebaseApp.Create(new AppOptions
+            //{
+            //    Credential = GoogleCredential.FromFile("Config/firebase.json")
+            //});
+
+            GoogleCredential credential;
+            // Nếu đang chạy Development (Local) và chưa set biến môi trường thì đọc file thủ công
+            if (builder.Environment.IsDevelopment() && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS")))
+            {
+                // Fallback cho máy local nếu lười set biến môi trường
+                // Đảm bảo file này tồn tại ở máy bạn
+                credential = GoogleCredential.FromFile("Config/firebase.json");
+            }
+            else
+            {
+                // Chạy trên Render hoặc đã set biến môi trường chuẩn
+                credential = GoogleCredential.GetApplicationDefault();
+            }
+
             FirebaseApp.Create(new AppOptions
             {
-                Credential = GoogleCredential.FromFile("Config/firebase.json")
+                Credential = credential
             });
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+
+                    // Lệnh này sẽ tạo bảng AspNetUsers, Tokens... trên Azure SQL
+                    context.Database.Migrate();
+
+                    Console.WriteLine("----> Identity Migrations applied successfully! <----");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"----> ERROR applying Identity migrations: {ex.Message} <----");
+                }
+            }
 
             if (app.Environment.IsDevelopment())
             {

@@ -51,6 +51,22 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<UrlDbContext>();
+
+        context.Database.Migrate();
+        Console.WriteLine("----> CRUD Service Migrations applied successfully! <----");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"----> ERROR applying migrations: {ex.Message} <----");
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

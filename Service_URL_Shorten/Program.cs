@@ -56,6 +56,22 @@ namespace Service_URL_Shorten
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+
+                    context.Database.Migrate();
+                    Console.WriteLine("----> Service Migrations applied successfully! <----");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"----> ERROR applying migrations: {ex.Message} <----");
+                }
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
