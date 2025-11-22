@@ -1,0 +1,211 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://cw-amd201-redis-ver-gateway-latest.onrender.com"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/gateway/url/shorten",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/url/shorten",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-urlshorten-latest-1.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      },
+      "FileCacheOptions": {
+        "Region": "shorten-cache",
+        "TtlSeconds": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/url/shorten/{code}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/url/{code}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-urlshorten-latest-1.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      },
+      "FileCacheOptions": {
+        "Region": "shorten-cache",
+        "TtlSeconds": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/url/info/{code}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/url/info/{code}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-urlshorten-latest-1.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 100,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/url/crud",
+      "UpstreamHttpMethod": [ "Get", "Post", "Delete" ],
+      "DownstreamPathTemplate": "/api/url",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-crud-latest.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      },
+      "FileCacheOptions": {
+        "Region": "crud-cache",
+        "TtlSeconds": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/url/crud/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "DownstreamPathTemplate": "/api/url/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-crud-latest.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      },
+      "FileCacheOptions": {
+        "Region": "crud-cache",
+        "TtlSeconds": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/url/crud/{shortCode}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "DownstreamPathTemplate": "/api/url/{shortCode}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-crud-latest.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      },
+      "FileCacheOptions": {
+        "Region": "crud-cache",
+        "TtlSeconds": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/identity/register",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/Auth/register",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-identity-latest.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      },
+      "FileCacheOptions": {
+        "Region": "identity-cache",
+        "TtlSeconds": 15
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/identity/verify",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/Auth/verify",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-identity-latest.onrender.com",
+          "Port": 443
+        }
+      ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "5s",
+        "PeriodTimespan": 1,
+        "Limit": 5,
+        "QuotaExceededMessage": "Too Many Requests",
+        "HttpStatusCode": 429
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/gateway/identity/logout",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamPathTemplate": "/api/Auth/logout",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "cw-amd201-redis-ver-identity-latest.onrender.com",
+          "Port": 443
+        }
+      ]
+    }
+  ]
+}
