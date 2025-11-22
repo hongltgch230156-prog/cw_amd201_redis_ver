@@ -62,6 +62,17 @@ namespace LoginRegister
                 credential = GoogleCredential.GetApplicationDefault();
             }
 
+            var path = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
+            Console.WriteLine($"----> DEBUG: Google Credential Path is: '{path}' <----");
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                if (File.Exists(path))
+                    Console.WriteLine("----> DEBUG: File EXISTS! <----");
+                else
+                    Console.WriteLine("----> DEBUG: File NOT FOUND! Check Secret Files on Render. <----");
+            }
+
             FirebaseApp.Create(new AppOptions
             {
                 Credential = credential
