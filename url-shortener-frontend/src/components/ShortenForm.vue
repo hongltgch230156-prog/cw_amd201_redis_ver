@@ -48,6 +48,8 @@ const callShortenUrlApi = async () => {
     let shortUrl, inputOriginalUrl;
 
     if (isLoggedIn.value && customShortcode.value) {
+      const crudServiceUrl = import.meta.env.VITE_CRUD_URL;
+      const shortenServiceUrl = import.meta.env.VITE_URL_SHORTEN_URL;
       // User nhập shortcode → CRUD backend (port 2222)
       const body = {
         originalUrl: originalUrl.value,
@@ -56,14 +58,14 @@ const callShortenUrlApi = async () => {
 
       console.log('Token sent to backend:', auth.idToken);
       const result = await axios.post(
-        'https://localhost:2222/api/Url',
+        crudServiceUrl,
         body,
         {
           headers: { Authorization: `Bearer ${auth.idToken}` }
         }
       );
 
-      shortUrl = `https://localhost:3333/api/Url/${result.data.shortCode}`;
+      shortUrl = `${shortenServiceUrl}/${result.data.shortCode}`;
       inputOriginalUrl = originalUrl.value;
 
     } else {
