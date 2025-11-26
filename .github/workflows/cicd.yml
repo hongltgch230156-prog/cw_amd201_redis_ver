@@ -11,23 +11,7 @@ env:
   DOCKER_REPOSITORY: ${{ secrets.DOCKER_USERNAME }}/cw_amd201_redis_ver
 
 jobs:
-  # --- 1. CI: CRUD ---
-  build-and-test-crud:
-    name: Build & Test CRUD
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore Dependencies
-        run: dotnet restore cw_amd201_redis_ver.sln
-      - name: Build Solution
-        run: dotnet build cw_amd201_redis_ver.sln --no-restore
-      - name: Run Unit Tests (CRUD)
-        run: dotnet test Test_Crud/Test_Crud.csproj --no-build --verbosity normal
+
 
   # --- 2. CI: URL SHORTEN ---
   build-and-test-urlshorten:
@@ -46,6 +30,24 @@ jobs:
         run: dotnet build cw_amd201_redis_ver.sln --no-restore
       - name: Run Unit Tests (URL Shorten)
         run: dotnet test Test_Shorten_Url/Test_Shorten_Url.csproj --no-build --verbosity normal
+
+    # --- 1. CI: CRUD ---
+  build-and-test-crud:
+    name: Build & Test CRUD
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore Dependencies
+        run: dotnet restore cw_amd201_redis_ver.sln
+      - name: Build Solution
+        run: dotnet build cw_amd201_redis_ver.sln --no-restore
+      - name: Run Unit Tests (CRUD)
+        run: dotnet test Test_Crud/Test_Crud.csproj --no-build --verbosity normal
 
   # --- 3. CI: API GATEWAY ---
   build-gateway:
